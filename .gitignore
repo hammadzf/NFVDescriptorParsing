@@ -2,3 +2,6 @@
 **/log
 **/output
 **/report
+./log
+./output
+./report
