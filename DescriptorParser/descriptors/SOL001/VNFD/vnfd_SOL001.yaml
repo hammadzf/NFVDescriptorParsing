@@ -1,0 +1,165 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: "TST010 reference VNF-B"
+
+imports:
+  - https://forge.etsi.org/rep/nfv/SOL001/raw/v2.7.1/etsi_nfv_sol001_vnfd_types.yaml  
+
+metadata:
+  descriptor_id: "VNF-B"
+  vendor: "ETSI TST WG"
+  version: "2.0"
+
+node_types:
+  tst010.vnf.simple:
+    derived_from: tosca.nodes.nfv.VNF
+    properties:
+      descriptor_id:
+        type: string
+        default: VNF-B
+      descriptor_version:
+        type: string
+        default: '1.0'
+      provider:
+        type: string
+        default: ETSI TST WG
+      product_name:
+        type: string
+        default: VNF-B
+      software_version:
+        type: string
+        default: '1.0'
+      product_info_name:
+        type: string
+        default: VNF-B
+      product_info_description:
+        type: string
+        default: TST010 reference VNF-B
+      flavour_id:
+        type: string
+        default: VNF-B_flavor
+      flavour_description:
+        type: string
+        default: "VNF-B flavor"
+      vnfm_info:
+        type: list
+        entry_schema:
+          type: string
+        default: [ 'etsivnfm:v2.3.1' ]
+    interfaces:
+      Vnflcm:
+        type: "tosca.interfaces.nfv.Vnflcm"
+        scale:
+          description: Invoked upon receipt of a Scale VNF request
+        terminate:
+          description: Invoked upon receipt Terminate VNF request
+        operate:
+          description: Invoked upon receipt of an Operate VNF request
+    requirements:
+      - virtual_link_right:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 1]
+      - virtual_link_left:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 1]
+      - virtual_link_management:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 1]
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 0]
+
+topology_template:
+  substitution_mappings:
+    node_type: "tst010.vnf.simple"
+    requirements:
+      virtual_link_right:
+        [right, virtual_link_right]
+      virtual_link_management:
+        [management, virtual_link_management]
+      virtual_link_left:
+        [left, virtual_link_left]
+  node_templates:
+    right:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        layer_protocols: [ ipv4 ]
+        order: 1
+      requirements:
+        - virtual_binding: VDU-B
+    management:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        layer_protocols: [ ipv4 ]
+        order: 0
+      requirements:
+        - virtual_binding: VDU-B
+    left:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        layer_protocols: [ ipv4 ]
+        order: 2
+      requirements:
+        - virtual_binding: VDU-B
+    vdu-b-1-vsd:
+      type: "tosca.nodes.nfv.Vdu.VirtualBlockStorage"
+      properties:
+        virtual_block_storage_data:
+          size_of_storage: 20 GB
+          rdma_enabled: false
+        sw_image_data:
+          name: "vdu-b-1 image"
+          version: "1.1"
+          checksum: 
+            algorithm: "sha-224"
+            hash: "somehashfortst010"
+          container_format: "bare"
+          disk_format: qcow2
+          min_disk: '1'
+          min_ram: '2'
+          size: '1'
+    VDU-B:
+      type: "tosca.nodes.nfv.Vdu.Compute"
+      properties:
+        name: "vdu-b-1-vcd"
+        description: "Description of VDU-B-1"
+        vdu_profile:
+          min_number_of_instances: 1
+          max_number_of_instances: 2
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 4096 MB
+              numa_enabled: false
+            virtual_cpu:
+              num_virtual_cpu: 2
+      requirements:
+        - virtual_storage: vdu-b-1-vsd
+        
+    vnf-b-1_VNF:
+      type: "tst010.vnf.simple"
+      properties:
+        descriptor_id: "VNF-B"
+        descriptor_version: "2.0"
+        provider: "ETSI TST WG"
+        product_name: "VDU_VNF-B"
+        software_version: "2.0"
+        product_info_name: "VDU_VNF-B"
+        product_info_description: "TST010 reference VNF-A"
+        flavour_id: "VNF-B_flavor"
+        flavour_description: "VNF-B flavor"
+        vnfm_info: 
+          - etsivnfm:v2.3.1 
+      interfaces:
+        Vnflcm:
+          type: "tosca.interfaces.nfv.Vnflcm"
+          scale:
+            implementation: scale-example.yaml
+          terminate:
+            implementation: terminate-example.yaml
+          operate:
+            implementation: operate-example.yaml

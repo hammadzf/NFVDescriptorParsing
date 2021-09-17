@@ -1,0 +1,113 @@
+tosca_definitions_version: "tosca_simple_yaml_1_2"
+tosca_default_namespace: "toscanfv"
+description: "Referenxce NSD descriptor "
+metadata:
+  descriptor_id: "NSD_WITH_2_VNF"
+  vendor: "ETSI"
+  version: "1.0"
+topology_template:
+  substitution_mappings:
+    node_type: "tosca.nodes.nfv.NS"
+    requirements:
+      right: [VNF_A, ext_a_right]
+      left: [VNF_B, ext_b_left]
+      mgmt_a: [VNF_A, management_vnf_a]
+      mgmt_b: [VNF_B, management_vnf_b]
+  node_templates:
+    VNF_A:
+      type: "tosca.nodes.nfv.VNF"
+      properties:
+        descriptor_id: "VNF-A"
+        descriptor_version: "1.0"
+        provider: "ETSI TST WG"
+        product_name: "VNF-A"
+        software_version: "1.0"
+        product_info_name: "VNF-A"
+        product_info_description: "TST010 reference VNF-A"
+        flavour_id: "VNF-A_flavor"
+        flavour_description: "VNF-A flavor"
+        vnfm_info: 
+          - 'etsivnfm:v2.3.1'
+      requirements:
+        virtualLink:
+          ext_a_right: "vl_right"
+          management_vnf_a: "vl_mgmt"
+          int_a_data: "vl_data"
+    VNF_B:
+      type: "tosca.nodes.nfv.VNF"
+      properties:
+        descriptorId: "VNF-B"
+        descriptorVersion: "1.0"
+        provider: "ETSI TST WG"
+        productName: "VNF-B"
+        softwareVersion: "1.0"
+        productInfoName: "VNF-B"
+        productInfoDescription: "TST010 reference VNF-A"
+        defaultLocalizationLanguage: null
+        flavourId: "VNF-B_flavor"
+        flavourDescription: "VNF-B flavor"
+        vnfm_info: 
+          - 'etsivnfm:v2.3.1'
+      requirements:
+        virtualLink:
+          ext_b_left: "vl_left"
+          management_vnf_b: "vl_mgmt"
+          int_b_data: "vl_data"
+    NS_with_2_VNF:
+      type: "tosca.nodes.nfv.NS"
+      properties:
+        descriptorId: "NS with 2 VNFs"
+        designer: "ETSI TST WG"
+        version: "1.0"
+        name: "ns_with_2_vnfs"
+        invariantId: "ns_with_2_vnfs"
+      requirements:
+        virtualLink:
+        - "vl_left"
+        - "vl_right"
+        - "vl_mgmt"
+        - "vl_data"
+    vl_left:
+      type: "tosca.nodes.nfv.NsVirtualLink"
+      properties:
+        description: "VNF-B external connetivity"
+        vlProfile: 
+          max_bitrate_requirements:
+            root: 1000
+          min_bitrate_requirements:  
+            root: 1000
+        connectivityType:
+          layer_protocols: [ipv4]
+    vl_right: 
+      type: "tosca.nodes.nfv.NsVirtualLink"
+      properties:
+        description: "VNF-A external connectivity"
+        vlProfile: 
+          max_bitrate_requirements:
+            root: 1000
+          min_bitrate_requirements:  
+            root: 1000
+        connectivityType:
+          layer_protocols: [ipv4]
+    vl_mgmt: 
+      type: "tosca.nodes.nfv.NsVirtualLink"
+      properties:
+        description: "Management network"
+        vlProfile: 
+          max_bitrate_requirements:
+            root: 1000
+          min_bitrate_requirements:  
+            root: 1000
+        connectivityType:
+          layer_protocols: [ipv4]
+    vl_data: 
+      type: "tosca.nodes.nfv.NsVirtualLink"
+      properties:
+        description: "Internal network that interconnect VNF-A and VNF-B"
+        vlProfile: 
+          max_bitrate_requirements:
+            root: 1000
+          min_bitrate_requirements:  
+            root: 1000
+        connectivityType:
+          layer_protocols: [ipv4]

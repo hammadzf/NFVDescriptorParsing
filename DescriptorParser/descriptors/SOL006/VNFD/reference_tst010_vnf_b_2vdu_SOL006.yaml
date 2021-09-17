@@ -1,0 +1,137 @@
+nfv:
+  vnfd:
+    - id: VNF-B-2vdu
+      provider: ETSI TST WG
+      product-name: TST010 reference VNF-B with 2 VDUs
+      software-version: '2.2'
+      version: '2.2'
+      vnfm-info: ETSI VNFM
+      vdu:
+        - id: vdu-b-1
+          name: VNF-B VDU 1
+          int-cpd:
+           - id: left
+             layer-protocol: ethernet
+           - id: management
+             layer-protocol: ethernet
+           - id: internal
+             layer-protocol: ethernet
+             int-virtual-link-desc: internal-vl
+          virtual-compute-desc: vdu-b-1-vcd
+          virtual-storage-desc: vdu-b-1-vsd
+          sw-image-desc: vdu-b-1-image
+        - id: vdu-b-2
+          name: VNF-B VDU 2
+          int-cpd:
+           - id: right
+             layer-protocol: ethernet
+           - id: management
+             layer-protocol: ethernet
+           - id: internal
+             layer-protocol: ethernet
+             int-virtual-link-desc: internal-vl
+          virtual-compute-desc: vdu-b-2-vcd
+          virtual-storage-desc: vdu-b-2-vsd
+          sw-image-desc: vdu-b-2-image
+      virtual-compute-desc:
+        id: vdu-b-1-vcd
+        virtual-memory:
+          size: '4.0'
+        virtual-cpu:
+          num-virtual-cpu: '2'
+      virtual-storage-desc:
+        id: vdu-b-1-vsd
+        type-of-storage: root-storage
+        size-of-storage: '0'
+      sw-image-desc:
+        id: vdu-b-1-image
+        name: VNF-B image
+        version: '1.1'
+        checksum:
+          algorithm: sha-224
+          hash: somehashfortst010
+        container-format: bare
+        disk-format: qcow2
+        min-disk: '1'
+        min-ram: '2.0'
+        size: '1'
+        image: 'http://someurl.com/VNF-B.qcow2'
+      virtual-compute-desc:
+        id: vdu-b-2-vcd
+        virtual-memory:
+          size: '6.0'
+        virtual-cpu:
+          num-virtual-cpu: '2'
+      virtual-storage-desc:
+        id: vdu-b-2-vsd
+        type-of-storage: root-storage
+        size-of-storage: '0'
+      sw-image-desc:
+        id: vdu-b-2-image
+        name: VNF-B-2 image
+        version: '1.1'
+        checksum:
+          algorithm: sha-224
+          hash: somehashfortst010
+        container-format: bare
+        disk-format: qcow2
+        min-disk: '1'
+        min-ram: '2.0'
+        size: '1'
+        image: 'http://someurl.com/VNF-B-2.qcow2'
+      int-virtual-link-desc:
+        - id: internal-vl
+          flavour:
+            id: internal-vl-flavour
+            qos:
+              latency: '1'
+              packet-delay-variation: '1'
+              packet-loss-ratio: '0.05'
+          connectivity-type:
+            layer-protocol: ethernet     
+      ext-cpd:
+        - id: ext-b-left
+          int-cpd:
+            vdu-id: vdu-b-1
+            cpd: left
+          layer-protocol: ethernet
+        - id: management
+          int-cpd:
+            vdu-id: vdu-b-1
+            cpd: management
+          layer-protocol: ethernet
+        - id: ext-b-right
+          int-cpd:
+            vdu-id: vdu-b-2
+            cpd: right
+          layer-protocol: ethernet
+      df:
+        id: normal
+        vdu-profile:
+          - id: vdu-b-1
+            min-number-of-instances: '1'
+            max-number-of-instances: '2'
+          - id: vdu-b-2
+            min-number-of-instances: '1'
+            max-number-of-instances: '4'          
+        instantiation-level:
+          - id: double
+            vdu-level:
+              - vdu-id: vdu-b-1
+                number-of-instances: '2'
+              - vdu-id: vdu-b-2
+                number-of-instances: '2'
+          - id: single
+            vdu-level:
+              - vdu-id: vdu-b-1
+                number-of-instances: '1'
+              - vdu-id: vdu-b-2
+                number-of-instances: '1'
+        default-instantiation-level: single
+        lcm-operations-configuration:
+          scale-vnf-to-level-op-config:
+            arbitrary-target-levels-supported: 'true'
+          terminate-vnf-op-config:
+            min-graceful-termination: '1'
+          operate-vnf-op-config:
+            min-graceful-stop-timeout: '1'

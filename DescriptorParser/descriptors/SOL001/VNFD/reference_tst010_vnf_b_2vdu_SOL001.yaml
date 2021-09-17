@@ -1,0 +1,168 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: "TST010 reference VNF-B"
+metadata:
+  descriptor_id: "VNF-B"
+  vendor: "ETSI TST WG"
+  version: "2.0"
+topology_template:
+  substitution_mappings:
+    node_type: "tosca.nodes.nfv.VNF"
+    requirements:
+      virtual_link_management:
+        [management, virtual_link_management]
+      virtual_link_left:
+        [left, virtual_link_left]
+      virtual_link_right:
+        [right, virtual_link_right]
+  node_templates:
+    right:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        order: 1
+      requirements:
+        virtual_link_right:
+        virtual_binding: VDU-B-2
+    management:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        order: 0
+      requirements:
+        virtual_link_management:
+        virtual_binding: VDU-B-1
+    left:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        order: 2
+      requirements:
+        virtual_link_left:
+        virtual_binding: VDU-B-1
+    internal_vl:
+      type: "tosca.nodes.nfv.VnfVirtualLink"
+      properties:
+        connectivity_type:
+          layer_protocols: [ ipv4 ]
+        description: Internal Virtual link in the VNF
+        vl_profile:
+          max_bitrate_requirements:
+            root: 100000
+            leaf: 20000
+          min_bitrate_requirements:
+            root: 10000
+            leaf: 10000
+    internal_vdu_b_1_cp:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        order: 2
+      requirements:
+        - virtual_binding: VDU-B-1
+        - virtual_link: internal_vl
+    internal_vdu_b_2_cp:
+      type: "tosca.nodes.nfv.VduCp"
+      properties:
+        order: 0
+      requirements:
+        - virtual_binding: VDU-B-2
+        - virtual_link: internal_vl
+    vdu_b_1_vsd:
+      type: "tosca.nodes.nfv.Vdu.VirtualBlockStorage"
+      properties:
+        virtual_block_storage_data:
+          size_of_storage: 20
+          rdma_enabled: false
+        sw_image_data:
+          name: "vdu-b-1 image"
+          version: "1.1"
+          checksum: 
+            algorithm: "sha-224"
+            hash: "somehashfortst010"
+          container_format: "bare"
+          disk-format: qcow2
+          min-disk: '1'
+          min-ram: '2'
+          size: '1'
+      artifacts:
+        sw_image:
+          type: "tosca.artifacts.nfv.SwImage"
+          file: vdu-b-1.qcow2
+    vdu_b_2_vsd:
+      type: "tosca.nodes.nfv.Vdu.VirtualBlockStorage"
+      properties:
+        virtual_block_storage_data:
+          size_of_storage: 20
+          rdma_enabled: false
+        sw_image_data:
+          name: "vdu-b-2 image"
+          version: "1.1"
+          checksum: 
+            algorithm: "sha-224"
+            hash: "somehashfortst010"
+          container_format: "bare"
+          disk-format: qcow2
+          min-disk: '1'
+          min-ram: '2'
+          size: '1'
+      artifacts:
+        sw_image:
+          type: tosca.artifacts.nfv.SwImage
+          file: vdu-b-2.qcow2
+    vnf_b_1_VNF:
+      type: "tosca.nodes.nfv.VNF"
+      properties:
+        descriptor_id: "VNF-B-2vdu"
+        descriptor_version: "2.0"
+        provider: "ETSI TST WG"
+        product_name: "VNF-B-2VDUs"
+        software_version: "2.0"
+        product_info_name: "VNF-B-2VDUs"
+        product_info_description: "TST010 reference VNF-B with 2 VDUs"
+        flavour_id: "VNF-B-2VDU_flavor"
+        flavour_description: "VNF-B with 2 VDUs flavor"
+        vnfm_info: 
+          etsivnfm: 
+          - v2.3.1 
+        interfaces:
+            Vnflcm:
+              scale:
+                implementation: scale-example.yaml
+              terminate:
+                implementation: terminate-example.yaml
+              operate:
+                implementation: operate-example.yaml
+    VDU_B_1:
+      type: "tosca.nodes.nfv.Vdu.Compute"
+      properties:
+        name: "vdu-b-1-vcd"
+        descriptor: "Description of VDU-B-1"
+        vdu_profile:
+          min_number_of_instances: 1
+          max_number_of_instances: 2
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 4096
+              numa_enabled: false
+            virtual_cpu:
+              num_virtual_cpu: 2
+      requirements:
+        virtual_storage:
+        - "vdu-b-1-vsd"
+    VDU_B_2:
+      type: "tosca.nodes.nfv.Vdu.Compute"
+      properties:
+        name: "vdu-b-2-vcd"
+        descriptor: "Description of VDU-B-2"
+        vdu_profile:
+          min_number_of_instances: 1
+          max_number_of_instances: 4
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 6144
+              numa_enabled: false
+            virtual_cpu:
+              num_virtual_cpu: 2
+      requirements:
+        virtual_storage:
+        - "vdu-b-2-vsd"                

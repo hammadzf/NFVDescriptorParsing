@@ -1,0 +1,73 @@
+*** Variables ***
+
+${check_descriptors}    1
+${descriptorType}    SOL001
+
+${tosca_type_VDU_compute}    tosca.nodes.nfv.Vdu.Compute
+${tosca_type_VNF}    tosca.nodes.nfv.VNF
+${tosca_type_virtual_link}    tosca.nodes.nfv.VnfVirtualLink
+${tosca_type_VDU_cp}    tosca.nodes.nfv.VduCp
+${tosca_type_storage}    tosca.nodes.nfv.Vdu.VirtualBlockStorage
+${tosca_type_derived_from_VNF}
+${tosca_type_NS}    tosca.nodes.nfv.NS
+${tosca_type_NsVirtualLink}    tosca.nodes.nfv.NsVirtualLink
+${tosca_type_NsCP}    tosca.nodes.nfv.Cp
+  
+@{VDU_IDs}
+@{VNF_IDs}
+@{virtualLink_IDs}
+@{CP_IDs}
+@{Storage_IDs}
+@{internalCP_IDs}
+@{externalCP_IDs}
+@{InstantiationLevel_IDs}
+
+@{NS_IDs}
+@{NS_VirtualLink_IDs}
+@{SAP_IDs}
+
+${NS_DescriptorID}
+${Designer}
+${NS_Name}
+${NS_Version}
+${NS_InvariantId}
+
+${Descriptor_ID}
+${Provider}
+${Product_Name}
+${Software_Version}
+${Descriptor_Version}
+
+#Dummy Response Values SOL006
+${Response_vduId}    vdu-b-1
+${Response_VNFId}    VNF-B-2vdu
+${Response_ProductName}    TST010 reference VNF-B with 2 VDUs
+${Response_SoftwareVersion}    2.2
+${Response_intCP}    internal
+${Response_extCP}    management
+${Response_virtualLink}    internal-vl
+${Response_Storage}    vdu-b-2-vsd
+${Response_InstantiationLevel}    single
+
+#Dummy Response Values SOL001
+${Response_vduIdS001}    VDU-B
+${Response_vnfd_id_SOL1}    VNF-B
+${Response_vnfProviderS001}    ETSI TST WG
+${Response_ProductNameS001}    VDU_VNF-B
+${Response_SoftwareVersionS001}    2.0
+#${Response_intCPS001}    internal_vdu_b_2_cp
+${Response_extCPS001}    right
+#${Response_virtualLinkS001}    internal_vl
+${Response_StorageS001}    vdu-b-1-vsd
+
+#Dummy Response Values NSD
+${Response_NSIdS001}    NS with 2 VNFs
+${Response_NSnameS001}    ns_with_2_vnfs
+${Response_NSdesignerS001}    ETSI TST WG
+${Response_NSInvariantIDS001}    ns_with_2_vnfs
+${Response_NsVersion}    1.0
+
+${Response_NSIdSol6}    tst010-nsd
+${Response_extCpSol6}    ext-b-right
+${Response_SapIDSol6}    left-sap
+${Response_NS_VL_S6}    A-to-B

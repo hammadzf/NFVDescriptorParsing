@@ -1,0 +1,284 @@
+nfv:
+  vnfd:
+    - id: VNF-A
+      provider: ETSI TST WG
+      product-name: TST010 reference VNF-A
+      software-version: '1.0'
+      version: '1.0'
+      vnfm-info: ETSI VNFM
+      vdu:
+      - id: vdu-a-1
+        name: VNF A VDU 1
+        int-cpd:
+          - id: right
+            layer-protocol: ethernet
+          - id: management
+            layer-protocol: ethernet
+          - id: left
+            layer-protocol: ethernet
+        virtual-compute-desc: vdu-a-1-vcd
+        virtual-storage-desc: vdu-a-1-vsd
+        sw-image-desc: asa-image
+      virtual-compute-desc:
+        id: vdu-a-1-vcd
+        virtual-memory:
+          size: '4.0'
+        virtual-cpu:
+          num-virtual-cpu: '2'
+      virtual-storage-desc:
+        id: vdu-a-1-vsd
+        type-of-storage: root-storage
+        size-of-storage: '0'
+      sw-image-desc:
+        id: vdu-a-1-image
+        name: vdu-a-1 image
+        version: '1.1'
+        checksum:
+          algorithm: sha-224
+          hash: somehashfortst010
+        container-format: bare
+        disk-format: qcow2
+        min-disk: '1'
+        min-ram: '2.0'
+        size: '1'
+        image: 'http://someurl.com/vnf-a.qcow2'
+      int-virtual-link-desc:
+      - id: right-vl
+        flavour:
+          id: right-vl-flavour
+          qos:
+            latency: '1'
+            packet-delay-variation: '1'
+            packet-loss-ratio: '0.02'
+        connectivity-type:
+          layer-protocol: ethernet
+      ext-cpd:
+        - id: ext-a-right
+          int-virtual-link-desc: right-vl
+          layer-protocol: ethernet
+        - id: management
+          int-cpd:
+            vdu-id: vdu-a-1
+            cpd: management
+          layer-protocol: ethernet
+        - id: ext-a-left
+          int-cpd:
+            vdu-id: vdu-a-1
+            cpd: left
+          layer-protocol: ethernet
+      df:
+        id: normal
+        vdu-profile:
+          id: vdu-a-1
+          min-number-of-instances: '1'
+          max-number-of-instances: '2'
+        virtual-link-profile:
+          id: right-vl
+          flavour: right-vl-flavour
+          max-bit-rate-requirements:
+            root: '10'
+          min-bit-rate-requirements:
+            root: '1'
+          virtual-link-protocol-data:
+            associated-layer-protocol: ipv4
+            l3-protocol-data:
+              name: right-network
+              ip-version: ipv4
+              cidr: 10.10.10.0/32
+              gateway-ip: 10.10.10.1
+              dhcp-enabled: 'true'
+        instantiation-level:
+          - id: double
+            vdu-level:
+              vdu-id: vdu-a-1
+              number-of-instances: '2'
+          - id: single
+            vdu-level:
+              vdu-id: vdu-a-1
+              number-of-instances: '1'
+        default-instantiation-level: single
+        lcm-operations-configuration:
+          scale-vnf-to-level-op-config:
+            arbitrary-target-levels-supported: 'true'
+          terminate-vnf-op-config:
+            min-graceful-termination: '1'
+          operate-vnf-op-config:
+            min-graceful-stop-timeout: '1'
+    - id: VNF-B
+      provider: ETSI TST WG
+      product-name: TST010 reference VNF-B
+      software-version: '2.0'
+      version: '2.0'
+      vnfm-info: ETSI VNFM
+      vdu:
+      - id: vdu-b-1
+        name: VNF-B VDU 1
+        int-cpd:
+          - id: left
+            layer-protocol: ethernet
+          - id: management
+            layer-protocol: ethernet
+          - id: right
+            layer-protocol: ethernet
+        virtual-compute-desc: vdu-b-1-vcd
+        virtual-storage-desc: vdu-b-1-vsd
+        sw-image-desc: vdu-b-1-image
+      virtual-compute-desc:
+        id: vdu-b-1-vcd
+        virtual-memory:
+          size: '4.0'
+        virtual-cpu:
+          num-virtual-cpu: '2'
+      virtual-storage-desc:
+        id: vdu-b-1-vsd
+        type-of-storage: root-storage
+        size-of-storage: '0'
+      sw-image-desc:
+        id: vdu-b-1-image
+        name: VNF-B image
+        version: '1.1'
+        checksum:
+          algorithm: sha-224
+          hash: somehashfortst010
+        container-format: bare
+        disk-format: qcow2
+        min-disk: '1'
+        min-ram: '2.0'
+        size: '1'
+        image: 'http://someurl.com/VNF-B.qcow2'
+      ext-cpd:
+        - id: ext-b-left
+          int-cpd:
+            vdu-id: vdu-b-1
+            cpd: left
+          layer-protocol: ethernet
+        - id: management
+          int-cpd:
+            vdu-id: vdu-b-1
+            cpd: management
+          layer-protocol: ethernet
+        - id: ext-b-right
+          int-cpd:
+            vdu-id: vdu-b-1
+            cpd: right
+          layer-protocol: ethernet
+      df:
+        id: normal
+        vdu-profile:
+          id: vdu-b-1
+          min-number-of-instances: '1'
+          max-number-of-instances: '2'
+        instantiation-level:
+          - id: double
+            vdu-level:
+              vdu-id: vdu-b-1
+              number-of-instances: '2'
+          - id: single
+            vdu-level:
+              vdu-id: vdu-b-1
+              number-of-instances: '1'
+        default-instantiation-level: single
+        lcm-operations-configuration:
+          scale-vnf-to-level-op-config:
+            arbitrary-target-levels-supported: 'true'
+          terminate-vnf-op-config:
+            min-graceful-termination: '1'
+          operate-vnf-op-config:
+            min-graceful-stop-timeout: '1'
+  nsd:
+    - id: tst010-nsd
+      vnfd-id:
+        - VNF-A
+        - VNF-B
+      sapd:
+        - id: right-sap
+          vnf:
+            vnfd-id: VNF-A
+            ext-cpd-id: ext-a-right
+        - id: management-sap
+          virtual-link-desc: mgmt
+        - id: left-sap
+          vnf:
+            vnfd-id: VNF-B
+            ext-cpd-id: ext-b-left
+      virtual-link-desc:
+        - id: mgmt
+          connectivity-type:
+            layer-protocol: ipv4
+          df:
+            id: normal
+            qos:
+              latency: '0'
+              packet-delay-variation: '0'
+        - id: A-to-B
+          connectivity-type:
+            layer-protocol: ethernet
+          df:
+            id: normal
+            qos:
+              latency: '0'
+              packet-delay-variation: '0'
+      df:
+        - id: normal
+          vnf-profile:
+            - id: vnf-a-profile
+              vnfd-id: VNF-A
+              flavour-id: normal
+              instantiation-level: single
+              min-number-of-instances: '1'
+              max-number-of-instances: '1'
+              virtual-link-connectivity:
+                - virtual-link-profile-id: mgmt
+                  constituent-cpd-id:
+                    constituent-base-element-id: vdu-a-1
+                    constituent-cpd-id: management
+                - virtual-link-profile-id: A-to-B
+                  constituent-cpd-id:
+                    constituent-base-element-id: vdu-a-1
+                    constituent-cpd-id: left
+            - id: vnf-b-profile
+              vnfd-id: VNF-B
+              flavour-id: normal
+              instantiation-level: single
+              min-number-of-instances: '1'
+              max-number-of-instances: '1'
+              virtual-link-connectivity:
+                - virtual-link-profile-id: mgmt
+                  constituent-cpd-id:
+                    constituent-base-element-id: vdu-b-1
+                    constituent-cpd-id: management
+                - virtual-link-profile-id: A-to-B
+                  constituent-cpd-id:
+                    constituent-base-element-id: vdu-b-1
+                    constituent-cpd-id: right
+          virtual-link-profile:
+            - id: mgmt
+              virtual-link-desc-id: mgmt
+              flavour-id: normal
+              max-bitrate-requirements:
+                root: '1000'
+              min-bitrate-requirements:
+                root: '0'
+            - id: A-to-B
+              virtual-link-desc-id: A-to-B
+              flavour-id: normal
+              max-bitrate-requirements:
+                root: '10000000'
+              min-bitrate-requirements:
+                root: '0'
+          ns-instantiation-level:
+            - id: normal
+              description: Single VNF-A and VNF-B
+              vnf-to-level-mapping:
+                - vnf-profile-id: vnf-a-profile
+                  number-of-instances: '1'
+                - vnf-profile-id: vnf-b-profile
+                  number-of-instances: '1'
+            - id: double-A
+              description: Single VNF-B and Double VNF-A
+              vnf-to-level-mapping:
+                - vnf-profile-id: vnf-a-profile
+                  number-of-instances: '2'
+                - vnf-profile-id: vnf-b-profile
+                  number-of-instances: '1'
+                  default-instantiation-level: normal
